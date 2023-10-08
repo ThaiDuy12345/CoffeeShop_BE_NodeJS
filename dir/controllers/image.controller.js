@@ -12,7 +12,7 @@ export const show = async (req, res) => {
         const image = await ImageModel.findById(id);
         if (!image)
             throw { code: 404, message: `${id} not found!!` };
-        res.send(`<img src='data:image/png;base64,${image.url}'>`);
+        res.send(`<img style="width: 90vw;" src='data:image/png;base64,${image.url}'>`);
     }
     catch (err) {
         res.status(err.code || 500).json({

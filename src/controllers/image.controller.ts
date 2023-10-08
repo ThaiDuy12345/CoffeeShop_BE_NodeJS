@@ -15,7 +15,7 @@ export const show = async (req: express.Request, res: express.Response) => {
     const image = await ImageModel.findById(id)
     if(!image) throw { code: 404, message: `${id} not found!!` }
     res.send(
-      `<img src='data:image/png;base64,${image.url}'>`
+      `<img style="width: 90vw;" src='data:image/png;base64,${image.url}'>`
     )
   }catch(err: any){
     res.status(err.code || 500).json({
