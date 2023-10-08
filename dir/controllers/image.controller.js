@@ -1,35 +1,49 @@
 import ImageModel from "../models/image.model.js";
 export const index = async (req, res) => {
-    const images = await ImageModel.find();
-    res.json({
-        status: res.statusCode,
+    const images = (await ImageModel.find()).map(image => image._id);
+    res.status(200).json({
+        status: 200,
         data: images
     });
 };
 export const show = async (req, res) => {
     try {
         const id = req.params.id;
-        const images = await ImageModel.findById(id);
-        res.json({
-            status: res.statusCode,
-            data: images
-        });
+        const image = await ImageModel.findById(id);
+        if (!image)
+            throw { code: 404, message: `${id} not found!!` };
+        res.send(`<img src='data:image/png;base64,${image.url}'>`);
     }
     catch (err) {
-        res.json({
-            status: 400,
+        res.status(err.code || 500).json({
+            status: err.code || 500,
             message: err.message
         });
     }
 };
 export const destroy = async (req, res) => {
+    await ImageModel.deleteOne({ _id: req.params.id });
+    res.status(200).json({
+        status: 200,
+        message: "Successfully deleted",
+    });
 };
 export const create = async (req, res) => {
     try {
+        if (!(req.file))
+            throw { code: 400, message: "File is missing!!" };
+        const base64 = req.file.buffer.toString('base64');
+        const image = await new ImageModel({
+            url: base64
+        }).save();
+        res.status(200).json({
+            status: 200,
+            data: image,
+        });
     }
     catch (err) {
-        res.json({
-            status: 400,
+        res.status(err.code || 500).json({
+            status: err.code || 500,
             message: err.message
         });
     }
