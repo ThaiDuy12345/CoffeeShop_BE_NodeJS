@@ -13,7 +13,7 @@ mongoose.connect(mongoURL)
 
 // Config cors
 app.use(cors({
-  origin: ['http://localhost:4200', 'https://coffee-shop-fpoly.netlify.app'], // Cho phép tất cả các nguồn
+  origin: 'http://localhost:4200' , // Cho phép tất cả các nguồn
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Cho phép tất cả các phương thức
 }));
 app.use(bodyParser.urlencoded({ extended: false }))
