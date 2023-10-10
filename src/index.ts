@@ -15,7 +15,7 @@ mongoose.connect(mongoURL)
 app.use(cors({
   origin: '*', // Cho phép tất cả các nguồn
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Cho phép tất cả các phương thức
-  allowedHeaders: '*'
+  allowedHeaders: ['http://localhost:4200', 'https://coffee-shop-fpoly.netlify.app', '*']
 }));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
