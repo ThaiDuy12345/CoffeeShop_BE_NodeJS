@@ -10,6 +10,12 @@ dotenv.config()
 const app = express()
 const mongoURL = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@coffeeshop.ugpe9mi.mongodb.net/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`
 mongoose.connect(mongoURL)
+
+// Config cors
+app.use(cors({
+  origin: "http://localhost:4200",
+
+}));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use((req, res, next) => {
