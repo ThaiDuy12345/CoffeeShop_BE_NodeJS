@@ -17,10 +17,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use((req, res, next) => {
-})
+app.use(express.json())
 app.use("/api", indexRoutes)
 app.get("/", (req, res) => {
   res.json({
