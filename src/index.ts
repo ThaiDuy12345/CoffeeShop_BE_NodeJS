@@ -16,6 +16,11 @@ app.use(cors({
   origin: "http://localhost:4200",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
+  allowedHeaders: [
+    'Access-Control-Allow-Origin: http://localhost:4200',
+    'Access-Control-Allow-Methods: GET, POST, PUT, DELETE',
+    'Access-Control-Allow-Credentials: true'
+  ]
 }));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
