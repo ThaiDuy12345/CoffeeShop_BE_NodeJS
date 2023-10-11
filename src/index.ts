@@ -15,7 +15,6 @@ mongoose.connect(mongoURL)
 app.use(cors({
   origin: "http://localhost:4200",
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
