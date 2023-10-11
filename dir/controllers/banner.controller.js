@@ -57,7 +57,7 @@ export const update = async (req, res) => {
         if (!banner)
             throw { message: "The banner Id not exists" };
         if (req.body.image_id) {
-            banner.image = req.body.image_id;
+            banner.image = new mongoose.Types.ObjectId(req.body.image_id);
         }
         else {
             banner.image =
