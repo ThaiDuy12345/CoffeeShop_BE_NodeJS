@@ -13,10 +13,12 @@ mongoose.connect(mongoURL)
 
 // Config cors
 app.use(cors({
-  origin: "http://localhost:4200/",
+  origin: "http://localhost:4200",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(express.json())
 app.use("/api", indexRoutes)
 app.get("/", (req, res) => {
