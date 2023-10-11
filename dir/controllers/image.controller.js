@@ -22,11 +22,22 @@ export const show = async (req, res) => {
     }
 };
 export const destroy = async (req, res) => {
-    await ImageModel.deleteOne({ _id: req.params.id });
-    res.status(200).json({
-        status: 200,
-        message: "Successfully deleted",
-    });
+    try {
+        if (['6526ac20a0ba131d9425a158', '6526afd16f619f69e8389e92'].includes(req.params.id)) {
+            throw { code: 400, message: "Cannot delete the default values" };
+        }
+        await ImageModel.deleteOne({ _id: req.params.id });
+        res.status(200).json({
+            status: 200,
+            message: "Successfully deleted",
+        });
+    }
+    catch (err) {
+        res.status(err.code).json({
+            status: err.code,
+            message: err.message,
+        });
+    }
 };
 export const create = async (req, res) => {
     try {

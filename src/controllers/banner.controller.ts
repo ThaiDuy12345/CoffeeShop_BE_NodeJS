@@ -59,17 +59,18 @@ export const update = async (req: express.Request, res: express.Response) => {
     })
 
     if(!banner) throw { message: "The banner Id not exists"}
+    console.log(req.body.image_id)
     if(req.body.image_id){
       banner.image = new mongoose.Types.ObjectId(req.body.image_id) 
     }else{
       banner.image = 
         banner.type === "main" ? 
-          new mongoose.Types.ObjectId("65262f964f92e173b60c0e36")
+          new mongoose.Types.ObjectId("6526ac20a0ba131d9425a158")
             : 
-          new mongoose.Types.ObjectId("652630734f92e173b60c0e38")
+          new mongoose.Types.ObjectId("6526afd16f619f69e8389e92")
     }
       
-    banner.save()
+    await banner.save()
 
     const populate_banner = await BannerModel.findById(banner.id).populate('image')
 
