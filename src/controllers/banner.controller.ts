@@ -1,5 +1,7 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import BannerModel from '../models/banner.model.js';
+import { ObjectId } from 'mongodb';
 export const index = async (req: express.Request, res: express.Response) => {
   const banners = await BannerModel.find()
   res.status(200).json({
@@ -50,15 +52,23 @@ export const create = async (req: express.Request, res: express.Response) => {
 
 export const update = async (req: express.Request, res: express.Response) => {
   try{
-    if(!(req.body.image_id && req.params.id)) throw { code: 400, message: "Banner's Id or Id is missing"}
+    if(!(req.params.id)) throw { code: 400, message: "Banner's Id or Id is missing"}
     
     const banner = await BannerModel.findById({
       _id: req.params.id
     })
 
     if(!banner) throw { message: "The banner Id not exists"}
-
-    banner.image = req.body.image_id
+    if(req.body.image_id){
+      banner.image = req.body.image_id 
+    }else{
+      banner.image = 
+        banner.type === "main" ? 
+          new mongoose.Types.ObjectId("65262f964f92e173b60c0e36")
+            : 
+          new mongoose.Types.ObjectId("652630734f92e173b60c0e38")
+    }
+      
     banner.save()
 
     const populate_banner = await BannerModel.findById(banner.id).populate('image')

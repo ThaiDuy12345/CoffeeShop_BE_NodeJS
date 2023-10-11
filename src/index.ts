@@ -13,7 +13,7 @@ mongoose.connect(mongoURL)
 
 // Config cors
 app.use(cors({
-  origin: "http://localhost:4200",
+  origin: ["http://localhost:4200", "https://coffee-shop-fpoly.netlify.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 app.use(bodyParser.urlencoded({ extended: false }))
