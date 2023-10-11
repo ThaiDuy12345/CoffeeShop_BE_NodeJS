@@ -13,7 +13,7 @@ mongoose.connect(mongoURL)
 
 // Config cors
 app.use(cors({
-  origin: "http://localhost:4200",
+  origin: "http://localhost:4200/",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
