@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import BannerModel from '../models/banner.model.js';
+import ImageModel from '../models/image.model.js';
 export const index = async (req, res) => {
     const banners = await BannerModel.find();
     res.status(200).json({
@@ -56,7 +57,10 @@ export const update = async (req, res) => {
         });
         if (!banner)
             throw { message: "The banner Id not exists" };
-        console.log(req.body.image_id);
+        //delete all previous image except for the default
+        if (banner.image !== undefined && !['6526ac20a0ba131d9425a158', '6526afd16f619f69e8389e92'].includes(banner.image.toString())) {
+            await ImageModel.deleteOne({ _id: banner.image });
+        }
         if (req.body.image_id) {
             banner.image = new mongoose.Types.ObjectId(req.body.image_id);
         }
