@@ -12,25 +12,25 @@ const firebaseConfig = {
     messagingSenderId: "124592920764",
     appId: "1:124592920764:web:aebb399b66ba3a8fe398b9",
     measurementId: "G-JYTD2FPXLG",
-    credential: admin.credential.cert(credential)
+    credential: admin.credential.cert(credential),
 };
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
-        const tempFilePath = `../temp/${file.originalname}`;
+        const tempFilePath = `../../src/temp/${file.originalname}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
             metadata: {
-                contentType: file.mimetype
-            }
+                contentType: file.mimetype,
+            },
         });
         fs.unlink(tempFilePath, (error) => {
             if (error) {
-                console.error('Lỗi khi xóa tệp tạm thời:', error);
+                console.error("Lỗi khi xóa tệp tạm thời:", error);
             }
             else {
-                console.log('Tệp tạm đã được xóa.');
+                console.log("Tệp tạm đã được xóa.");
             }
         });
     }
@@ -39,29 +39,39 @@ export const upload = async (file, desination) => {
     }
 };
 export const get = async (fileName, desination) => {
-    return await app.bucket().file(`${desination}/${fileName}`).getSignedUrl({
-        action: 'read',
-        expires: new Date('12-31-3000'), // Điều này đảm bảo URL không hết hạn
+    return await app
+        .bucket()
+        .file(`${desination}/${fileName}`)
+        .getSignedUrl({
+        action: "read",
+        expires: new Date("12-31-3000"), // Điều này đảm bảo URL không hết hạn
     });
 };
 export const getAll = async (desination) => {
     const files = await app.bucket().getFiles({
         prefix: `${desination}/`,
     });
-    const fileList = files[0].filter(file => {
-        return !(file.name.endsWith('/'));
-    }).map((file => {
+    const fileList = files[0]
+        .filter((file) => {
+        return !file.name.endsWith("/");
+    })
+        .map((file) => {
         return file.name;
-    }));
+    });
     return fileList;
 };
 export const resetBanner = async (fileName) => {
-    const defaultPath = `../assets/${fileName}`;
-    await app.bucket().upload(defaultPath, {
-        destination: `banners/${fileName}`,
-        metadata: {
-            contentType: "image/png"
-        }
-    });
+    try {
+        const defaultPath = `../../src/assets/${fileName}`;
+        await app.bucket().upload(defaultPath, {
+            destination: `banners/${fileName}`,
+            metadata: {
+                contentType: "image/png",
+            },
+        });
+    }
+    catch (err) {
+        console.log(err);
+    }
 };
 //# sourceMappingURL=firebase.service.js.map

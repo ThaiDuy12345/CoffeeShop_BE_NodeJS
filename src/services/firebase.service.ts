@@ -1,74 +1,92 @@
 import { initializeApp } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
-import fs from "fs"
-import admin from "firebase-admin"
-import credential from "../environments/coffee-shop-project-f6ca3-firebase-adminsdk-fhrfp-b069fb1810.js"
+import fs from "fs";
+import admin from "firebase-admin";
+import credential from "../environments/coffee-shop-project-f6ca3-firebase-adminsdk-fhrfp-b069fb1810.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCAZ-8faDUSDw9Krd9hCaK5rhPgDI2EcSk",
   authDomain: "coffee-shop-project-f6ca3.firebaseapp.com",
-  databaseURL: "https://coffee-shop-project-f6ca3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://coffee-shop-project-f6ca3-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "coffee-shop-project-f6ca3",
   storageBucket: "coffee-shop-project-f6ca3.appspot.com",
   messagingSenderId: "124592920764",
   appId: "1:124592920764:web:aebb399b66ba3a8fe398b9",
   measurementId: "G-JYTD2FPXLG",
-  credential: admin.credential.cert(credential as admin.ServiceAccount)
+  credential: admin.credential.cert(credential as admin.ServiceAccount),
 };
 
-const app = getStorage(initializeApp(firebaseConfig))
+const app = getStorage(initializeApp(firebaseConfig));
 
-export const upload = async ( file: Express.Multer.File, desination: "banners" | "images" ): Promise<void> => {
-  try{
-    const tempFilePath = `../temp/${file.originalname}`
+export const upload = async (
+  file: Express.Multer.File,
+  desination: "banners" | "images"
+): Promise<void> => {
+  try {
+    const tempFilePath = `../../src/temp/${file.originalname}`;
     fs.writeFileSync(tempFilePath, file.buffer);
-  
-    await app.bucket().upload(tempFilePath,{
+
+    await app.bucket().upload(tempFilePath, {
       destination: `${desination}/${file.originalname}`,
       metadata: {
-        contentType: file.mimetype
-      }
-    }) 
-  
+        contentType: file.mimetype,
+      },
+    });
+
     fs.unlink(tempFilePath, (error) => {
       if (error) {
-        console.error('Lỗi khi xóa tệp tạm thời:', error);
+        console.error("Lỗi khi xóa tệp tạm thời:", error);
       } else {
-        console.log('Tệp tạm đã được xóa.');
+        console.log("Tệp tạm đã được xóa.");
       }
     });
-  }catch(err: any){
-    console.log(err.message)
+  } catch (err: any) {
+    console.log(err.message);
   }
-}
+};
 
-export const get = async (fileName: string, desination: "banners" | "images"): Promise<any> => {
-  return await app.bucket().file(`${desination}/${fileName}`).getSignedUrl({
-    action: 'read',
-    expires: new Date('12-31-3000'), // Điều này đảm bảo URL không hết hạn
-  })
-}
+export const get = async (
+  fileName: string,
+  desination: "banners" | "images"
+): Promise<any> => {
+  return await app
+    .bucket()
+    .file(`${desination}/${fileName}`)
+    .getSignedUrl({
+      action: "read",
+      expires: new Date("12-31-3000"), // Điều này đảm bảo URL không hết hạn
+    });
+};
 
-export const getAll = async (desination: "banners" | "images"): Promise<String[]> => {
+export const getAll = async (
+  desination: "banners" | "images"
+): Promise<String[]> => {
   const files = await app.bucket().getFiles({
     prefix: `${desination}/`,
-  })
+  });
 
-  const fileList = files[0].filter(file => {
-    return !(file.name.endsWith('/'))
-  }).map((file => {
-    return file.name
-  }))
+  const fileList = files[0]
+    .filter((file) => {
+      return !file.name.endsWith("/");
+    })
+    .map((file) => {
+      return file.name;
+    });
 
-  return fileList
-}
+  return fileList;
+};
 
 export const resetBanner = async (fileName: string): Promise<any> => {
-  const defaultPath = `../assets/${fileName}`
+  try {
+    const defaultPath = `../../src/assets/${fileName}`;
 
-  await app.bucket().upload(defaultPath,{
-    destination: `banners/${fileName}`,
-    metadata: {
-      contentType: "image/png"
-    }
-  }) 
-}
+    await app.bucket().upload(defaultPath, {
+      destination: `banners/${fileName}`,
+      metadata: {
+        contentType: "image/png",
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
