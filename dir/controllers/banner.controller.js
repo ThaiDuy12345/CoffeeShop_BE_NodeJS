@@ -1,86 +1,78 @@
-import mongoose from 'mongoose';
-import BannerModel from '../models/banner.model.js';
-import ImageModel from '../models/image.model.js';
+import { upload, get, getAll, resetBanner } from "../services/firebase.service.js";
 export const index = async (req, res) => {
-    const banners = await BannerModel.find();
-    res.status(200).json({
-        status: 200,
-        data: banners
-    });
+    try {
+        res.status(200).json({
+            status: true,
+            data: await getAll("banners")
+        });
+    }
+    catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
 };
 export const show = async (req, res) => {
     try {
-        if (!(req.params.id))
-            throw { code: 400, message: 'Id is missing' };
-        const banner = await BannerModel.findById(req.params.id).populate('image');
+        if (!["main", "pop_up"].includes(req.params.type))
+            throw { code: 400, message: 'Banner type is missing or undefined' };
+        const fileName = req.params.type === "main" ? "bannerMain.png" : "bannerPopUp.png";
         res.status(200).json({
-            status: 200,
-            data: banner
+            status: true,
+            data: {
+                name: fileName,
+                url: await get(fileName, "banners")
+            }
         });
     }
     catch (err) {
         res.status(err.code || 500).json({
-            status: err.code || 500,
+            status: false,
             messsage: err.message
         });
     }
 };
-//main - 65243a5c03b0401f307211a0
-//pop_up - 65243cdd7b2bd52ca2bb1037
+export const reset = async (req, res) => {
+    try {
+        if (!["main", "pop_up"].includes(req.params.type))
+            throw { code: 400, message: 'Banner type is missing or undefined' };
+        const fileName = req.params.type === "main" ? "bannerMain.png" : "bannerPopUp.png";
+        await resetBanner(fileName);
+        res.status(200).json({
+            status: true,
+            data: {
+                name: fileName,
+                url: await get(fileName, "banners")
+            }
+        });
+    }
+    catch (err) {
+        res.status(err.code || 500).json({
+            status: false,
+            messsage: err.message
+        });
+    }
+};
 export const create = async (req, res) => {
     try {
-        if (!(req.body.image_id && req.body.image_type))
-            throw { code: 400, message: "Id or type is missing" };
-        const banner = await new BannerModel({
-            type: req.body.image_type,
-            image: req.body.image_id
-        }).save();
-        const populate_banner = await BannerModel.findById(banner.id).populate('image');
+        if (!(req.params.type && req.file))
+            throw { code: 400, message: "Type or file is missing" };
+        const image = req.file;
+        image.originalname = req.params.type === "main" ? "bannerMain.png" : "bannerPopUp.png";
+        image.mimetype = "image/png";
+        await upload(image, "banners");
         res.status(200).json({
-            status: 200,
-            data: populate_banner
+            status: true,
+            data: {
+                name: image.originalname,
+                url: await get(image.originalname, "banners")
+            }
         });
     }
     catch (err) {
         res.status(err.code || 500).json({
-            status: err.code || 500,
-            messsage: err.message
-        });
-    }
-};
-export const update = async (req, res) => {
-    try {
-        if (!(req.params.id))
-            throw { code: 400, message: "Banner's Id or Id is missing" };
-        const banner = await BannerModel.findById({
-            _id: req.params.id
-        });
-        if (!banner)
-            throw { message: "The banner Id not exists" };
-        //delete all previous image except for the default
-        if (banner.image !== undefined && !['6526ac20a0ba131d9425a158', '6526afd16f619f69e8389e92'].includes(banner.image.toString())) {
-            await ImageModel.deleteOne({ _id: banner.image });
-        }
-        if (req.body.image_id) {
-            banner.image = new mongoose.Types.ObjectId(req.body.image_id);
-        }
-        else {
-            banner.image =
-                banner.type === "main" ?
-                    new mongoose.Types.ObjectId("6526ac20a0ba131d9425a158")
-                    :
-                        new mongoose.Types.ObjectId("6526afd16f619f69e8389e92");
-        }
-        await banner.save();
-        const populate_banner = await BannerModel.findById(banner.id).populate('image');
-        res.status(200).json({
-            status: 200,
-            data: populate_banner
-        });
-    }
-    catch (err) {
-        res.status(err.code || 500).json({
-            status: err.code || 500,
+            status: false,
             messsage: err.message
         });
     }

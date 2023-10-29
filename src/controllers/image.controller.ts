@@ -1,69 +1,60 @@
 import express from 'express';
-import ImageModel from "../models/image.model.js"
-
+import { get, upload, getAll } from "../services/firebase.service.js"
 export const index = async (req: express.Request, res: express.Response) => {
-  const images = (await ImageModel.find()).map(image => image._id)
-  res.status(200).json({
-    status: 200,
-    data: images
-  })
+  try{
+    res.status(200).json({
+      status: true,
+      url: getAll("images")
+    })
+  }catch(err: any){
+    res.status(err.code || 500).json({
+      status: false,
+      message: err.message
+    })
+  }
 }
 
 export const show = async (req: express.Request, res: express.Response) => {
   try{
-    const id = req.params.id
-    const image = await ImageModel.findById(id)
-    if(!image) throw { code: 404, message: `${id} not found!!` }
+    if(!req.params.id) throw { code: 400, message: 'Id is missing or undefined' }
+    const fileName = `product_${req.params.id}.png`
+
     res.status(200).json({
-      status: 200,
-      data: image
+      status: true,
+      data: {
+        name: fileName,
+        url: await get(fileName, "images")
+      }
     })
   }catch(err: any){
     res.status(err.code || 500).json({
-      status: err.code || 500,
+      status: false,
       message: err.message
     })
   }
-  
-}
-
-export const destroy = async (req: express.Request, res: express.Response) => {
-  try{
-    if(['6526ac20a0ba131d9425a158', '6526afd16f619f69e8389e92'].includes(req.params.id)){
-      throw { code: 400, message: "Cannot delete the default values" }
-    }
-    await ImageModel.deleteOne({ _id: req.params.id })
-    res.status(200).json({
-      status: 200,
-      message: "Successfully deleted",
-    })
-  }catch(err: any){
-    res.status(err.code).json({
-      status: err.code,
-      message: err.message,
-    })
-  }
-  
 }
 
 export const create = async (req: express.Request, res: express.Response) => {
   try{
-    if(!(req.file)) throw { code: 400, message: "File is missing!!" }
-
-    const base64 = req.file.buffer.toString('base64')
+    if(!(req.file && req.params.id)) throw { code: 400, message: "File or id is missing!!" }
     
-    const image = await new ImageModel({
-      url: base64
-    }).save()
+    const image = req.file
+    image.originalname = `product_${req.params.id}.png`
+    image.mimetype = "image/png"
 
-    res.status(200).json({
-      status: 200,
-      data: image,
+    upload(image, "images")
+    
+    res.status(200).json({  
+      status: true,
+      data: {
+        name: image.originalname,
+        url: await get(image.originalname, "images")
+      }
     })
 
   }catch(err: any){
     res.status(err.code || 500).json({
-      status: err.code || 500,
+      status: false,
       message: err.message
     })
   }

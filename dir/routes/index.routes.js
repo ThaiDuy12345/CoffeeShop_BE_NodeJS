@@ -6,7 +6,7 @@ routes.use("/image", imageRoutes);
 routes.use("/banner", bannerRoutes);
 routes.get("/", (req, res) => {
     res.status(200).json({
-        status: 200,
+        status: true,
         message: "API is working"
     });
 });

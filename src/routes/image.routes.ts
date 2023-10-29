@@ -9,7 +9,6 @@ const upload = multer({ storage });
 
 routes.get("/", imageController.index)
 routes.get("/:id", imageController.show)
-routes.post("/", upload.single('file'), imageController.create)
-routes.delete("/:id", imageController.destroy)
+routes.post("/:id", upload.single('file'), imageController.create)
 
 export default routes

@@ -1,15 +1,12 @@
 import express from "express"
 import indexRoutes from "./routes/index.routes.js"
 import dotenv from "dotenv"
-import mongoose from "mongoose"
 import bodyParser from "body-parser"
 import cors from 'cors'
 
 dotenv.config()
 
 const app = express()
-const mongoURL = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@coffeeshop.ugpe9mi.mongodb.net/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`
-mongoose.connect(mongoURL)
 
 // Config cors
 app.use(cors({
@@ -22,7 +19,7 @@ app.use(express.json())
 app.use("/api", indexRoutes)
 app.get("/", (req, res) => {
   res.json({
-    status: 200,
+    status: true,
     message: "App is working"
   })
 })
