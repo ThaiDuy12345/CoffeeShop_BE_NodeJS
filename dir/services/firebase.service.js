@@ -16,22 +16,27 @@ const firebaseConfig = {
 };
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
-    const tempFilePath = `src/temp/${file.originalname}`;
-    fs.writeFileSync(tempFilePath, file.buffer);
-    await app.bucket().upload(tempFilePath, {
-        destination: `${desination}/${file.originalname}`,
-        metadata: {
-            contentType: file.mimetype
-        }
-    });
-    fs.unlink(tempFilePath, (error) => {
-        if (error) {
-            console.error('Lỗi khi xóa tệp tạm thời:', error);
-        }
-        else {
-            console.log('Tệp tạm đã được xóa.');
-        }
-    });
+    try {
+        const tempFilePath = `src/temp/${file.originalname}`;
+        fs.writeFileSync(tempFilePath, file.buffer);
+        await app.bucket().upload(tempFilePath, {
+            destination: `${desination}/${file.originalname}`,
+            metadata: {
+                contentType: file.mimetype
+            }
+        });
+        fs.unlink(tempFilePath, (error) => {
+            if (error) {
+                console.error('Lỗi khi xóa tệp tạm thời:', error);
+            }
+            else {
+                console.log('Tệp tạm đã được xóa.');
+            }
+        });
+    }
+    catch (err) {
+        console.log(err.message);
+    }
 };
 export const get = async (fileName, desination) => {
     return await app.bucket().file(`${desination}/${fileName}`).getSignedUrl({
