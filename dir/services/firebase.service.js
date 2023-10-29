@@ -18,7 +18,7 @@ const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
         // Liệt kê tất cả các tệp trong thư mục
-        fs.readdir("../", (error, files) => {
+        fs.readdir("../src", (error, files) => {
             if (error) {
                 console.error('Lỗi khi đọc thư mục:', error);
             }
