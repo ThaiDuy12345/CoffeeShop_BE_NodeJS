@@ -19,7 +19,7 @@ const app = getStorage(initializeApp(firebaseConfig))
 
 export const upload = async ( file: Express.Multer.File, desination: "banners" | "images" ): Promise<void> => {
   try{
-    const tempFilePath = `src/temp/${file.originalname}`
+    const tempFilePath = `../temp/${file.originalname}`
     fs.writeFileSync(tempFilePath, file.buffer);
   
     await app.bucket().upload(tempFilePath,{
@@ -63,7 +63,7 @@ export const getAll = async (desination: "banners" | "images"): Promise<String[]
 }
 
 export const resetBanner = async (fileName: string): Promise<any> => {
-  const defaultPath = `src/assets/${fileName}`
+  const defaultPath = `../assets/${fileName}`
 
   await app.bucket().upload(defaultPath,{
     destination: `banners/${fileName}`,

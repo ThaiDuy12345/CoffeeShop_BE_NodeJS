@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
-        const tempFilePath = `src/temp/${file.originalname}`;
+        const tempFilePath = `../temp/${file.originalname}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
@@ -56,7 +56,7 @@ export const getAll = async (desination) => {
     return fileList;
 };
 export const resetBanner = async (fileName) => {
-    const defaultPath = `src/assets/${fileName}`;
+    const defaultPath = `../assets/${fileName}`;
     await app.bucket().upload(defaultPath, {
         destination: `banners/${fileName}`,
         metadata: {
