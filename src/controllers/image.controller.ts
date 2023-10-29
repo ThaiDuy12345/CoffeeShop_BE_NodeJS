@@ -23,7 +23,7 @@ export const show = async (req: express.Request, res: express.Response) => {
       status: true,
       data: {
         name: fileName,
-        url: await get(fileName, "images")
+        url: (await get(fileName, "images"))[0]
       }
     })
   }catch(err: any){
@@ -48,7 +48,7 @@ export const create = async (req: express.Request, res: express.Response) => {
       status: true,
       data: {
         name: image.originalname,
-        url: await get(image.originalname, "images")
+        url: (await get(image.originalname, "images"))[0]
       }
     })
 

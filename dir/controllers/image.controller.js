@@ -22,7 +22,7 @@ export const show = async (req, res) => {
             status: true,
             data: {
                 name: fileName,
-                url: await get(fileName, "images")
+                url: (await get(fileName, "images"))[0]
             }
         });
     }
@@ -45,7 +45,7 @@ export const create = async (req, res) => {
             status: true,
             data: {
                 name: image.originalname,
-                url: await get(image.originalname, "images")
+                url: (await get(image.originalname, "images"))[0]
             }
         });
     }

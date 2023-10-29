@@ -24,7 +24,7 @@ export const show = async (req: express.Request, res: express.Response) => {
       status: true,
       data: {
         name: fileName,
-        url: await get(fileName, "banners")
+        url: (await get(fileName, "banners"))[0]
       }
     })
   }catch (err: any){
@@ -46,7 +46,7 @@ export const reset = async (req: express.Request, res: express.Response) => {
       status: true,
       data: {
         name: fileName,
-        url: await get(fileName, "banners")
+        url: (await get(fileName, "banners"))[0]
       }
     })
   }catch(err: any){
@@ -72,7 +72,7 @@ export const create = async (req: express.Request, res: express.Response) => {
       status: true,
       data: {
         name: image.originalname,
-        url: await get(image.originalname, "banners")
+        url: (await get(image.originalname, "banners"))[0]
       }
     })
   }catch (err: any){
