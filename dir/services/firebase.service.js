@@ -17,19 +17,7 @@ const firebaseConfig = {
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
-        // Liệt kê tất cả các tệp trong thư mục
-        fs.readdir("../src", (error, files) => {
-            if (error) {
-                console.error('Lỗi khi đọc thư mục:', error);
-            }
-            else {
-                console.log('Danh sách các tệp trong thư mục:');
-                files.forEach((file) => {
-                    console.log(file);
-                });
-            }
-        });
-        const tempFilePath = `../../src/temp/${file.originalname}`;
+        const tempFilePath = `../src/src/temp/${file.originalname}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
@@ -74,7 +62,7 @@ export const getAll = async (desination) => {
 };
 export const resetBanner = async (fileName) => {
     try {
-        const defaultPath = `../../src/assets/${fileName}`;
+        const defaultPath = `../src/src/assets/${fileName}`;
         await app.bucket().upload(defaultPath, {
             destination: `banners/${fileName}`,
             metadata: {
