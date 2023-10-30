@@ -27,11 +27,23 @@ export const upload = async (
     fs.writeFileSync(tempFilePath, file.buffer);
 
     // Liệt kê tất cả các tệp trong thư mục
-    fs.readdir("../src/src/temp/", (error, files) => {
+    fs.readdir("../src/src", (error, files) => {
       if (error) {
         console.error('Lỗi khi đọc thư mục:', error);
       } else {
-        console.log('Danh sách các tệp trong thư mục:');
+        console.log('Danh sách các tệp trong thư mục src:');
+        files.forEach((file) => {
+          console.log(file);
+        });
+      }
+    });
+
+    // Liệt kê tất cả các tệp trong thư mục
+    fs.readdir("../src/src/temp", (error, files) => {
+      if (error) {
+        console.error('Lỗi khi đọc thư mục:', error);
+      } else {
+        console.log('Danh sách các tệp trong thư mục temp:');
         files.forEach((file) => {
           console.log(file);
         });
