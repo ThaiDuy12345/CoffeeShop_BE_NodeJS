@@ -18,7 +18,6 @@ const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
         const tempFilePath = `../src/src/temp/${file.originalname}`;
-        fs.writeFileSync(tempFilePath, file.buffer);
         // Liệt kê tất cả các tệp trong thư mục
         fs.readdir("../src/src", (error, files) => {
             if (error) {
@@ -43,6 +42,7 @@ export const upload = async (file, desination) => {
                 });
             }
         });
+        fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
             metadata: {
