@@ -15,12 +15,14 @@ const firebaseConfig = {
     credential: admin.credential.cert(credential),
 };
 const app = getStorage(initializeApp(firebaseConfig));
-export const upload = async (file, desination) => {
+export const upload = async (file, destination) => {
     try {
-        const tempFilePath = `../src/src/temp/${file.originalname}`;
+        deleteOld(file.originalname, destination);
+        const fileName = newNameGenerator(file.originalname);
+        const tempFilePath = `../src/src/temp/${fileName}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
-            destination: `${desination}/${file.originalname}`,
+            destination: `${destination}/${fileName}`,
             metadata: {
                 contentType: file.mimetype,
             },
@@ -39,9 +41,18 @@ export const upload = async (file, desination) => {
     }
 };
 export const get = async (fileName, desination) => {
+    const files = await app.bucket().getFiles({
+        prefix: `${desination}/`,
+    });
+    const file = files[0]
+        .find((file) => {
+        return !file.name.endsWith("/") && file.name.includes(fileName);
+    });
+    if (!file)
+        return null;
     return await app
         .bucket()
-        .file(`${desination}/${fileName}`)
+        .file(`${file.name}`)
         .getSignedUrl({
         action: "read",
         expires: new Date("12-31-3000"), // Điều này đảm bảo URL không hết hạn
@@ -60,11 +71,27 @@ export const getAll = async (desination) => {
     });
     return fileList;
 };
+const deleteOld = async (fileName, destination) => {
+    const files = await app.bucket().getFiles({
+        prefix: `${destination}/`,
+    });
+    const file = files[0]
+        .find((file) => {
+        return !file.name.endsWith("/") && file.name.includes(fileName);
+    });
+    if (file) {
+        await app.bucket().file(file.name).delete();
+    }
+};
+const newNameGenerator = (fileName) => `${fileName}_${new Date().getTime()}.png`;
 export const resetBanner = async (fileName) => {
     try {
-        const defaultPath = `../src/src/assets/${fileName}`;
+        deleteOld(fileName, "banners");
+        //path ../src/src/
+        //local path src/
+        const defaultPath = `../src/src/assets/${fileName}.png`;
         await app.bucket().upload(defaultPath, {
-            destination: `banners/${fileName}`,
+            destination: `banners/${newNameGenerator(fileName)}`,
             metadata: {
                 contentType: "image/png",
             },

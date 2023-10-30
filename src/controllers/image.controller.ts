@@ -4,7 +4,7 @@ export const index = async (req: express.Request, res: express.Response) => {
   try{
     res.status(200).json({
       status: true,
-      url: getAll("images")
+      url: await getAll("images")
     })
   }catch(err: any){
     res.status(err.code || 500).json({
@@ -17,13 +17,13 @@ export const index = async (req: express.Request, res: express.Response) => {
 export const show = async (req: express.Request, res: express.Response) => {
   try{
     if(!req.params.id) throw { code: 400, message: 'Id is missing or undefined' }
-    const fileName = `product_${req.params.id}.png`
-
+    const fileName = `product_${req.params.id}`
+    const result = await get(fileName, "images")
     res.status(200).json({
       status: true,
       data: {
         name: fileName,
-        url: (await get(fileName, "images"))[0]
+        url: result ? result[0] : null
       }
     })
   }catch(err: any){
@@ -39,16 +39,18 @@ export const create = async (req: express.Request, res: express.Response) => {
     if(!(req.file && req.params.id)) throw { code: 400, message: "File or id is missing!!" }
     
     const image = req.file
-    image.originalname = `product_${req.params.id}.png`
+    image.originalname = `product_${req.params.id}`
     image.mimetype = "image/png"
 
-    upload(image, "images")
-    
+    await upload(image, "images")
+
+    const result = await get(image.originalname, "images")
+
     res.status(200).json({  
       status: true,
       data: {
         name: image.originalname,
-        url: (await get(image.originalname, "images"))[0]
+        url: result ? result[0] : null
       }
     })
 
