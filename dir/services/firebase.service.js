@@ -17,31 +17,7 @@ const firebaseConfig = {
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
-        const tempFilePath = `../src/src/tempImageFiles/${file.originalname}`;
-        // Liệt kê tất cả các tệp trong thư mục
-        fs.readdir("../src/src", (error, files) => {
-            if (error) {
-                console.error('Lỗi khi đọc thư mục:', error);
-            }
-            else {
-                console.log('Danh sách các tệp trong thư mục src:');
-                files.forEach((file) => {
-                    console.log(file);
-                });
-            }
-        });
-        // Liệt kê tất cả các tệp trong thư mục
-        fs.readdir("../src/src/tempImageFiles", (error, files) => {
-            if (error) {
-                console.error('Lỗi khi đọc thư mục:', error);
-            }
-            else {
-                console.log('Danh sách các tệp trong thư mục temp:');
-                files.forEach((file) => {
-                    console.log(file);
-                });
-            }
-        });
+        const tempFilePath = `../src/src/temp/${file.originalname}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
