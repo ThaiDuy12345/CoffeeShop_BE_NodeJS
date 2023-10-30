@@ -19,6 +19,18 @@ export const upload = async (file, desination) => {
     try {
         const tempFilePath = `../src/src/temp/${file.originalname}`;
         fs.writeFileSync(tempFilePath, file.buffer);
+        // Liệt kê tất cả các tệp trong thư mục
+        fs.readdir("../src/src/temp/", (error, files) => {
+            if (error) {
+                console.error('Lỗi khi đọc thư mục:', error);
+            }
+            else {
+                console.log('Danh sách các tệp trong thư mục:');
+                files.forEach((file) => {
+                    console.log(file);
+                });
+            }
+        });
         await app.bucket().upload(tempFilePath, {
             destination: `${desination}/${file.originalname}`,
             metadata: {
