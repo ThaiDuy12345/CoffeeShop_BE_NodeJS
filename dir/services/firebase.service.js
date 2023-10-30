@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = getStorage(initializeApp(firebaseConfig));
 export const upload = async (file, desination) => {
     try {
-        const tempFilePath = `../src/src/temp/${file.originalname}`;
+        const tempFilePath = `../src/src/tempImageFiles/${file.originalname}`;
         // Liệt kê tất cả các tệp trong thư mục
         fs.readdir("../src/src", (error, files) => {
             if (error) {
@@ -31,7 +31,7 @@ export const upload = async (file, desination) => {
             }
         });
         // Liệt kê tất cả các tệp trong thư mục
-        fs.readdir("../src/src/temp", (error, files) => {
+        fs.readdir("../src/src/tempImageFiles", (error, files) => {
             if (error) {
                 console.error('Lỗi khi đọc thư mục:', error);
             }
