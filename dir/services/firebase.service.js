@@ -19,7 +19,7 @@ export const upload = async (file, destination) => {
     try {
         deleteOld(file.originalname, destination);
         const fileName = newNameGenerator(file.originalname);
-        const tempFilePath = `src/temp/${fileName}`;
+        const tempFilePath = `../src/src/temp/${fileName}`;
         fs.writeFileSync(tempFilePath, file.buffer);
         await app.bucket().upload(tempFilePath, {
             destination: `${destination}/${fileName}`,
@@ -87,7 +87,7 @@ export const resetBanner = async (fileName) => {
         deleteOld(fileName, "banners");
         //path ../src/src/
         //local path src/
-        const defaultPath = `src/assets/${fileName}.png`;
+        const defaultPath = `../src/src/assets/${fileName}.png`;
         await app.bucket().upload(defaultPath, {
             destination: `banners/${newNameGenerator(fileName)}`,
             metadata: {
