@@ -93,15 +93,17 @@ const deleteOld = async (fileName: string, destination: "banners" | "images"): P
   const files = await app.bucket().getFiles({
     prefix: `${destination}/`,
   });
+    files.forEach(async (file) => {
 
-  const file = files[0]
-    .find((file) => {
-      return !file.name.endsWith("/") && file.name.includes(fileName)
+    const imageFile = file
+    .find((f: any) => {
+      return !f.name.endsWith("/") && f.name.includes(fileName)
     })
 
-  if(file) {
-    await app.bucket().file(file.name).delete()
-  }
+    if(imageFile) {
+      await app.bucket().file(imageFile.name).delete()
+    }
+  })
 }
 
 const newNameGenerator = (fileName: string): string => `${fileName}_${new Date().getTime()}.png` 
